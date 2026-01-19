@@ -10,11 +10,8 @@ public class TicTacToeGame{
     public void initializeGame(){
         players = new LinkedList<>();
 
-        PlayingPiece cross=new PlayingPiece(PieceType.X);
-        Player p1=new Player("p1",cross,new HumanPlayingStrategy());
-
-        PlayingPiece nought=new PlayingPiece(PieceType.O);
-        Player p2=new Player("p2",nought,new BotPlayingStrategy());
+        Player p1 = PlayerFactory.createHumanPlayer("Player1",PieceType.X);
+        Player p2 = PlayerFactory.createBotPlayer("Player2",PieceType.O);
 
         players.add(p1);
         players.add(p2);
