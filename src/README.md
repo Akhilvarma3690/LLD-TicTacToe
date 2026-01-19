@@ -1,13 +1,26 @@
-# Tic-Tac-Toe (Version 2.1: Factory Pattern)
-This version adds the **Factory Design Pattern** to the existing Strategy Pattern implementation.
+# Tic-Tac-Toe (Version 3.0: Command Pattern)
+This version adds the **Command Design Pattern** to support "Undo" functionality.
 
-### The Problem: "Creation Complexity"
-In the previous version, the `TicTacToeGame` class (the Client) had to know **too much** about how to build a player. It had to:
-1. Create the `PlayingPiece`.
-2. Select the right `PieceType`.
-3. Select the right `PlayingStrategy`.
-4. Pass them all into the `Player` constructor correctly.
+**The Problem:** Right now, your game loop does this: board.addPiece(row, col, piece) This changes the board destructively. The previous state is lost forever. You cannot "go back."
 
-**The messy code:**
-```java
-Player p = new Player("Name", new PlayingPiece(PieceType.X), new HumanPlayingStrategy());
+**The Solution (Command Pattern):** We will stop making moves directly. instead, we will create Command Objects.
+
+**The Command:** A class called MoveCommand that remembers where a piece was placed.
+
+**The Stack:** A list of all past commands (History).
+
+**The Undo:** When you want to go back, we take the last command from the stack and call its undo() method.
+
+
+**Strategy Pattern:** Human vs Bot logic.
+
+**Factory Pattern:** Clean Object Creation.
+
+**Command Pattern:** Encapsulates moves as objects to allow `Ctrl+Z` (Undo).
+
+### How it works:
+Instead of modifying the board directly, we create `MoveCommand` objects.
+`execute()`: Places the piece on the board.
+
+`undo()`: Removes the piece from the board.
+We store these commands in a `Stack` (History).
