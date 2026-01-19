@@ -11,10 +11,10 @@ public class TicTacToeGame{
         players = new LinkedList<>();
 
         PlayingPiece cross=new PlayingPiece(PieceType.X);
-        Player p1=new Player("p1",cross);
+        Player p1=new Player("p1",cross,new HumanPlayingStrategy());
 
         PlayingPiece nought=new PlayingPiece(PieceType.O);
-        Player p2=new Player("p2",nought);
+        Player p2=new Player("p2",nought,new BotPlayingStrategy());
 
         players.add(p1);
         players.add(p2);
@@ -29,12 +29,11 @@ public class TicTacToeGame{
             Player playerTurn = players.removeFirst();
 
             gameBoard.printBoard();
-            System.out.print("Player: "+ playerTurn.name + " Enter row,column: ");
-            Scanner inputScanner = new Scanner(System.in);
-            String s= inputScanner.nextLine();
-            String[] values = s.split(",");
-            int inputRow = Integer.valueOf(values[0]);
-            int inputCol = Integer.valueOf(values[1]);
+            System.out.println("Player: "+ playerTurn.name + " is thinking ");
+
+            int[] values = playerTurn.playingStrategy.makeMove(gameBoard);
+            int inputRow = values[0];
+            int inputCol = values[1];
 
             boolean pieceadded= gameBoard.addPiece(inputRow, inputCol,playerTurn.playingPiece);
             if(pieceadded){
