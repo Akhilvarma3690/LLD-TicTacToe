@@ -2,10 +2,12 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.List;
+import  java.util.Stack;
 
 public class TicTacToeGame{
     Deque<Player> players;
     Board gameBoard;
+    Stack<Command> history = new Stack<>();
 
     public void initializeGame(){
         players = new LinkedList<>();
@@ -23,32 +25,52 @@ public class TicTacToeGame{
         boolean noWinner = true;
 
         while(noWinner){
+
             Player playerTurn = players.removeFirst();
-
             gameBoard.printBoard();
-            System.out.println("Player: "+ playerTurn.name + " is thinking ");
-
-            int[] values = playerTurn.playingStrategy.makeMove(gameBoard);
-            int inputRow = values[0];
-            int inputCol = values[1];
-
-            boolean pieceadded= gameBoard.addPiece(inputRow, inputCol,playerTurn.playingPiece);
-            if(pieceadded){
-                boolean winner=isThereWinner(inputRow,inputCol,playerTurn.playingPiece.type);
-                if(winner){
-                    gameBoard.printBoard();
-                    return playerTurn.name;
-                }
-            }
-            //Chech for tie (board full)
+            //check if there are free spaces
             if(!gameBoard.hasFreeSpace()){
-                gameBoard.printBoard();
-                return "tie";
+                noWinner = false;
+                continue;
             }
-            if(!pieceadded){
-                System.out.println("Incorrect Position Chosen, try again");
+            System.out.println("Player: "+ playerTurn.name + " turn.");
+            // get the move
+            int[] cell = playerTurn.playingStrategy.makeMove(gameBoard);
+
+            // undo logic
+            if(cell[0] == -1) {
+                if (history.isEmpty()) {
+                    System.out.println("Nothing to undo!");
+                    players.addFirst(playerTurn);
+                }
+
+                Command lastCommand = history.pop();
+                lastCommand.undo();
+                System.out.println("Undo Successful");
+
+                // now give turn back to previous player
                 players.addFirst(playerTurn);
-                continue; // skip below
+                Player previousPlayer = players.removeLast();
+                players.addFirst(previousPlayer);
+                continue;
+            }
+
+            int inputRow = cell[0];
+            int inputCol = cell[1];
+            //check if free
+            if(!gameBoard.isCellFree(inputRow,inputCol)){
+                System.out.println("Incorrect position please try again");
+                players.addFirst(playerTurn);
+                continue;
+            }
+            Command moveCommand = new MoveCommand(gameBoard,inputRow,inputCol,playerTurn.playingPiece);
+            moveCommand.execute(); // adds the piece
+            history.push(moveCommand); // save for undo
+
+            //check for winner
+            if(isThereWinner(inputRow,inputCol,playerTurn.playingPiece.type)){
+                gameBoard.printBoard();
+                return playerTurn.name;
             }
             players.addLast(playerTurn);
         }

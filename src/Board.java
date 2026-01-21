@@ -24,6 +24,9 @@ public class Board{
         board[row][col] = piece;
         return true;
     }
+    public void removePiece(int row,int col){
+        board[row][col]=null;
+    }
 
     public boolean hasFreeSpace(){
         for(int i=0;i<size;i++){
@@ -34,5 +37,9 @@ public class Board{
             }
         }
         return false;
+    }
+
+    public boolean isCellFree(int row,int col){
+        return board[row][col] == null;
     }
 }
