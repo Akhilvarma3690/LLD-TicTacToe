@@ -1,13 +1,19 @@
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.List;
-import  java.util.Stack;
+import java.util.*;
 
 public class TicTacToeGame{
     Deque<Player> players;
     Board gameBoard;
     Stack<Command> history = new Stack<>();
+
+    List<GameObserver> observers= new ArrayList<>();
+    public void addObserver(GameObserver observer){
+        observers.add(observer);
+    }
+    public void notifyObservers(String message){
+        for(GameObserver observer : observers){
+            observer.onGameEvent(message);
+        }
+    }
 
     public void initializeGame(){
         players = new LinkedList<>();
@@ -67,9 +73,12 @@ public class TicTacToeGame{
             moveCommand.execute(); // adds the piece
             history.push(moveCommand); // save for undo
 
+            notifyObservers("Player "+playerTurn.name + " moved at "+ inputRow +","+inputCol);
+
             //check for winner
             if(isThereWinner(inputRow,inputCol,playerTurn.playingPiece.type)){
                 gameBoard.printBoard();
+                notifyObservers(playerTurn.name + "won!");
                 return playerTurn.name;
             }
             players.addLast(playerTurn);
