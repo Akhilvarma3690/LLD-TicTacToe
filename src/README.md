@@ -11,16 +11,19 @@ This version adds the **Command Design Pattern** to support "Undo" functionality
 
 **The Undo:** When you want to go back, we take the last command from the stack and call its undo() method.
 
-
 **Strategy Pattern:** Human vs Bot logic.
 
 **Factory Pattern:** Clean Object Creation.
 
-**Command Pattern:** Encapsulates moves as objects to allow `Ctrl+Z` (Undo).
-
+**Command Pattern:** encapsulates a request as an
+object, allowing you to parameterize and queue them, which in turn helps in decoupling the
+sender and receiver. By storing the object's state, we can also implement undo/redo
+operations.
 ### How it works:
 Instead of modifying the board directly, we create `MoveCommand` objects.
 `execute()`: Places the piece on the board.
-
 `undo()`: Removes the piece from the board.
 We store these commands in a `Stack` (History).
+
+**Observer Pattern:** 
+Implemented 'GameObserver' to broadcast game events (Moves, Wins) to subscribers.
